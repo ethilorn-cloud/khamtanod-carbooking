@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบหลังบ้าน | จองรถส่วนกลาง อบต.คำโตนด</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'TH SarabunIT9';
+  src:local('TH SarabunIT๙'),local('TH SarabunIT9'),local('THSarabunIT9'),
+      local('TH SarabunPSK'),local('TH Sarabun New'),
+      url('fonts/THSarabunIT9.ttf') format('truetype');
+  font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'TH SarabunIT9';
+  src:local('TH SarabunIT๙ Bold'),local('THSarabunIT9 Bold'),local('TH SarabunPSK Bold'),
+      url('fonts/THSarabunIT9-Bold.ttf') format('truetype');
+  font-weight:700;font-style:normal;font-display:swap}
+
+:root{--pri:#1d4ed8;--ok:#16a34a;--warn:#f59e0b;--bad:#dc2626;--info:#0891b2;--done:#64748b;
+      --line:#e2e8f0;--mut:#64748b;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#0f172a;font-family:Sarabun,'Noto Sans Thai',system-ui,sans-serif;font-size:15px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 14px 70px}
+.top{background:linear-gradient(120deg,#0f172a,#1e3a8a);color:#fff;padding:16px 0}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-bottom:0}
+.top h1{font-size:18px;margin:0}
+.top .sub{font-size:13px;color:#cbd5e1}
+.btn{border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer;
+  background:var(--pri);color:#fff;display:inline-flex;gap:6px;align-items:center;transition:.15s;text-decoration:none}
+.btn:hover{filter:brightness(1.1)} .btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:8px}
+.btn.g{background:var(--ok)} .btn.r{background:var(--bad)} .btn.s{background:var(--done)}
+.btn.w{background:var(--warn)} .btn.i{background:var(--info)}
+.btn.o{background:#fff;color:var(--pri);border:1px solid #cbd5e1}
+.card{background:#fff;border-radius:var(--r);box-shadow:0 2px 14px rgba(15,23,42,.07);padding:18px;margin-bottom:16px}
+.kpi{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));margin:16px 0}
+.k{background:#fff;border-radius:var(--r);padding:14px 16px;border-left:5px solid var(--pri);box-shadow:0 2px 12px rgba(15,23,42,.06)}
+.k b{display:block;font-size:26px;line-height:1.2} .k span{font-size:13px;color:var(--mut)}
+.k.w{border-color:var(--warn)} .k.g{border-color:var(--ok)} .k.i{border-color:var(--info)} .k.s{border-color:var(--done)}
+.tabs{display:flex;gap:6px;background:#fff;border-radius:12px;padding:6px;overflow-x:auto;
+  box-shadow:0 2px 14px rgba(15,23,42,.07);margin-bottom:16px}
+.tabs button{flex:1;min-width:140px;border:0;background:transparent;padding:10px;border-radius:9px;
+  font:inherit;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--pri);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f8fafc;font-size:13px;color:#475569;position:sticky;top:0;z-index:1}
+tbody tr:hover{background:#f8fafc}
+.tw{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:10px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.b-ok{background:#dcfce7;color:#166534} .b-warn{background:#fef3c7;color:#92400e}
+.b-bad{background:#fee2e2;color:#991b1b} .b-info{background:#cffafe;color:#155e75}
+.b-done{background:#e2e8f0;color:#334155}
+label{display:block;font-size:13px;font-weight:600;margin:0 0 4px;color:#334155}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:#fff}
+input:focus,select:focus,textarea:focus{outline:0;border-color:#3b82f6;box-shadow:0 0 0 3px #bfdbfe}
+.f2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.f3{display:grid;gap:12px;grid-template-columns:1fr 1fr 1fr}
+@media(max-width:760px){.f2,.f3{grid-template-columns:1fr}}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;align-items:flex-start;
+  justify-content:center;padding:20px;z-index:1000;overflow:auto}
+.mask.on{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:720px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal .hd{background:var(--pri);color:#fff;padding:14px 18px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+.modal .hd h2{margin:0;font-size:17px}
+.modal .bd{padding:18px;max-height:66vh;overflow:auto}
+.modal .ft{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.x{background:rgba(255,255,255,.2);border:0;color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px}
+.empty{text-align:center;color:var(--mut);padding:36px}
+.hint{font-size:12px;color:var(--mut)}
+.login{max-width:380px;margin:12vh auto;background:#fff;border-radius:18px;padding:28px;box-shadow:0 20px 50px rgba(0,0,0,.18);text-align:center}
+.sgrp{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.sgrp h4{margin:0 0 8px;font-size:14px}
+.srow{display:grid;grid-template-columns:1fr 1.4fr auto;gap:8px;margin-bottom:8px}
+@media(max-width:760px){.srow{grid-template-columns:1fr}}
+#toastBox{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:11px 16px;border-radius:10px;color:#fff;font-weight:600;font-size:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);transition:.25s;background:var(--ok);max-width:330px}
+.toast.t-warn{background:var(--warn)} .toast.t-bad{background:var(--bad)} .toast.t-info{background:var(--info)}
+
+/* ===== หน้าพิมพ์ แบบ ๓ ===== */
+#printRoot{display:none}
+#printRoot .sheet{--fs:16pt;
+  font-family:'TH SarabunIT9','TH SarabunPSK','TH Sarabun New',Sarabun,'Noto Sans Thai',sans-serif;
+  font-size:var(--fs);line-height:1.42;color:#000;background:#fff;box-sizing:border-box}
+#printRoot .form-no{text-align:right;font-weight:700;font-size:1.05em}
+#printRoot .doc-title{text-align:center;font-weight:700;font-size:1.28em;margin:.15em 0 .6em}
+#printRoot .date-line{text-align:right;margin-bottom:.45em;white-space:nowrap}
+#printRoot .to-line{margin:.2em 0 .35em}
+#printRoot .body-text{text-indent:2.5cm;text-align:justify;text-justify:inter-word;margin:0 0 .5em}
+#printRoot .dl{display:inline-block;border-bottom:1px dotted #000;text-align:center;vertical-align:baseline;
+  padding:0 .25em;min-width:2.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#printRoot .dl.f1{min-width:4.5em} #printRoot .dl.f2{min-width:7em} #printRoot .dl.f3{min-width:9.5em}
+#printRoot .dl.fill{width:6.5cm} #printRoot .dl.w-50{width:1.4cm} #printRoot .dl.w-60{width:1.7cm}
+#printRoot .dl.w-70{width:1.9cm} #printRoot .dl.w-90{width:2.4cm} #printRoot .dl.w-110{width:3.1cm}
+#printRoot .cb{display:inline-block;width:1em;height:1em;border:1px solid #000;line-height:.95em;text-align:center;margin:0 .15em;font-weight:700}
+#printRoot .sign-row{display:flex;gap:.6cm;margin-top:.9em;page-break-inside:avoid}
+#printRoot .sign-box{flex:1;text-align:center;line-height:1.75}
+#printRoot .sign-box .small{font-size:.92em}
+#printRoot .mini-head{margin-top:1em;font-weight:700}
+#printRoot .opt-line{margin:.15em 0 .1em}
+#printRoot .sheet+.sheet{page-break-before:always}
+#printRoot.preview{display:block;position:fixed;inset:0;z-index:9000;overflow:auto;background:#525659;padding:76px 0 24px}
+#printRoot.preview .sheet{width:21cm;min-height:29.7cm;margin:0 auto 20px;padding:1cm 2cm 1cm 3cm;box-shadow:0 6px 28px rgba(0,0,0,.45)}
+.pv-bar{position:fixed;top:0;left:0;right:0;height:52px;z-index:9001;background:#1e293b;color:#fff;
+  display:flex;align-items:center;gap:10px;padding:0 16px;overflow-x:auto}
+.pv-bar select,.pv-bar button{font-family:inherit;font-size:14px;padding:6px 12px;border-radius:8px;border:0;cursor:pointer}
+.pv-bar .sp{flex:1}
+@media print{
+  @page{size:A4 portrait;margin:1cm 2cm 1cm 3cm}
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+  body>*:not(#printRoot){display:none!important}
+  .pv-bar{display:none!important}
+  #printRoot,#printRoot.preview{display:block!important;position:static!important;inset:auto!important;
+    background:#fff!important;padding:0!important;overflow:visible!important}
+  #printRoot.preview .sheet{width:auto!important;min-height:0!important;margin:0!important;padding:0!important;box-shadow:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== หน้าเข้าสู่ระบบ ===== -->
+<div id="gate">
+  <div class="login">
+    <div style="font-size:42px">🔐</div>
+    <h2 style="margin:6px 0 2px">ระบบหลังบ้าน</h2>
+    <p class="hint" style="margin:0 0 16px">สำหรับเจ้าหน้าที่ อบต.คำโตนด</p>
+    <input type="password" id="pw" placeholder="รหัสผ่านเจ้าหน้าที่" style="text-align:center">
+    <button class="btn" id="btnLogin" style="width:100%;justify-content:center;margin-top:12px">เข้าสู่ระบบ</button>
+    <p class="hint" style="margin-top:16px"><a href="index.html">← กลับหน้าจองรถ</a></p>
+  </div>
+</div>
+
+<!-- ===== แอปหลัก ===== -->
+<div id="app" hidden>
+<div class="top"><div class="wrap">
+  <span style="font-size:26px">🛠️</span>
+  <div style="flex:1"><h1>ระบบจัดการรถส่วนกลาง (หลังบ้าน)</h1>
+    <div class="sub">องค์การบริหารส่วนตำบลคำโตนด</div></div>
+  <a class="btn o sm" href="index.html">🏠 หน้าจองรถ</a>
+  <button class="btn s sm" id="btnOut">ออกจากระบบ</button>
+</div></div>
+
+<div class="wrap">
+  <div class="kpi" id="kpi"></div>
+
+  <div class="tabs" id="aTabs">
+    <button class="on" data-t="wait">⏳ รออนุมัติ <b id="nWait"></b></button>
+    <button data-t="ok">✅ อนุมัติแล้ว</button>
+    <button data-t="ret">↩️ รอตรวจคืนรถ <b id="nRet"></b></button>
+    <button data-t="all">📚 ทั้งหมด</button>
+    <button data-t="rep">📊 รายงาน</button>
+    <button data-t="cfg">✍️ ผู้ลงนาม</button>
+  </div>
+
+  <section id="a-wait" class="card"><div class="tw"><table id="tWait"></table></div></section>
+  <section id="a-ok" class="card" hidden><div class="tw"><table id="tOk"></table></div></section>
+  <section id="a-ret" class="card" hidden><div class="tw"><table id="tRet"></table></div></section>
+
+  <section id="a-all" hidden>
+    <div class="card f3">
+      <div><label>ค้นหา</label><input id="aKey" placeholder="ชื่อ / ทะเบียน / สถานที่"></div>
+      <div><label>สถานะ</label><select id="aSt"><option value="">ทุกสถานะ</option></select></div>
+      <div><label>รถ</label><select id="aCar"><option value="">ทุกคัน</option></select></div>
+    </div>
+    <div class="card"><div class="tw"><table id="tAll"></table></div></div>
+  </section>
+
+  <section id="a-rep" hidden>
+    <div class="card f3">
+      <div><label>ตั้งแต่วันที่</label><input type="date" id="rFrom"></div>
+      <div><label>ถึงวันที่</label><input type="date" id="rTo"></div>
+      <div style="display:flex;align-items:end;gap:8px">
+        <button class="btn" id="rGo">ประมวลผล</button>
+        <button class="btn g" id="rCsv">⬇️ Excel/CSV</button>
+      </div>
+    </div>
+    <div class="card"><h3 style="margin:0 0 10px;font-size:16px">สรุปรายคัน</h3>
+      <div class="tw"><table id="tRep"></table></div></div>
+    <div class="card"><h3 style="margin:0 0 10px;font-size:16px">รายการทั้งหมดในช่วง</h3>
+      <div class="tw"><table id="tRepList"></table></div></div>
+  </section>
+
+  <section id="a-cfg" hidden>
+    <div class="card">
+      <div class="f2">
+        <div><label>ชื่อหน่วยงาน</label><input id="cfgOrg"></div>
+        <div><label>เรียน (ผู้มีอำนาจอนุญาต)</label><input id="cfgTo"></div>
+      </div>
+      <div id="cfgGroups" style="margin-top:16px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn o" id="cfgReset">คืนค่าเริ่มต้น</button>
+        <button class="btn g" id="cfgSave">💾 บันทึกผู้ลงนาม</button>
+      </div>
+      <p class="hint" style="margin-top:10px">บันทึกที่เอกสาร <code>app_config/signers</code> — หน้าบ้านเห็นผลทันที ไม่กระทบ collection <code>bookings</code></p>
+    </div>
+  </section>
+</div>
+</div>
+
+<!-- ===== Modal อนุมัติ ===== -->
+<div class="mask" id="mkAp"><form class="modal" id="frmAp">
+  <div class="hd"><h2>อนุมัติคำขอใช้รถ</h2><button type="button" class="x" data-close>×</button></div>
+  <div class="bd">
+    <div id="apInfo" class="card" style="box-shadow:none;background:#f8fafc;margin:0 0 14px"></div>
+    <div class="f2">
+      <div><label>พนักงานขับรถ</label><select id="apDriver"></select></div>
+      <div><label>เบอร์โทร</label><input id="apPhone"></div>
+    </div>
+    <div class="f3" style="margin-top:12px">
+      <div><label>ผอ.กอง / ผู้แทน</label><select id="apHead"></select></div>
+      <div><label>ผู้สั่งใช้รถแทน</label><select id="apDele"></select></div>
+      <div><label>ผู้อนุมัติ</label><select id="apAppr"></select></div>
+    </div>
+    <div class="f2" style="margin-top:12px">
+      <div><label>เลขไมล์ออก</label><input type="number" id="apMile" min="0"></div>
+      <div style="display:flex;align-items:end">
+        <label style="display:flex;gap:8px;align-items:center;font-weight:600">
+          <input type="checkbox" id="apLine" checked style="width:auto"> แจ้งเตือนผ่าน LINE</label>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><button type="button" class="btn s" data-close>ยกเลิก</button>
+    <button class="btn g" id="apGo">✅ อนุมัติ</button></div>
+</form></div>
+
+<!-- ===== Modal ไม่อนุมัติ ===== -->
+<div class="mask" id="mkNo"><form class="modal" id="frmNo" style="max-width:480px">
+  <div class="hd" style="background:var(--bad)"><h2>ไม่อนุมัติคำขอ</h2><button type="button" class="x" data-close>×</button></div>
+  <div class="bd"><label>เหตุผล *</label><textarea id="noReason" rows="3" required maxlength="250"></textarea></div>
+  <div class="ft"><button type="button" class="btn s" data-close>ยกเลิก</button><button class="btn r">ยืนยัน</button></div>
+</form></div>
+
+<!-- ===== Modal แก้ไขรายการ ===== -->
+<div class="mask" id="mkEd"><form class="modal" id="frmEd">
+  <div class="hd"><h2>แก้ไขรายการ</h2><button type="button" class="x" data-close>×</button></div>
+  <div class="bd">
+    <div class="f2">
+      <div><label>ผู้ขอใช้รถ</label><input name="userName" maxlength="80"></div>
+      <div><label>ตำแหน่ง</label><input name="userPosition" maxlength="80"></div>
+    </div>
+    <div class="f2" style="margin-top:12px">
+      <div><label>วันที่ไป</label><input type="date" name="date"></div>
+      <div><label>เวลาออก</label><input type="time" name="startTime"></div>
+    </div>
+    <div class="f2" style="margin-top:12px">
+      <div><label>วันที่กลับ</label><input type="date" name="returnDate"></div>
+      <div><label>เวลากลับ</label><input type="time" name="endTime"></div>
+    </div>
+    <div style="margin-top:12px"><label>สถานที่</label><input name="destination" maxlength="120"></div>
+    <div style="margin-top:12px"><label>วัตถุประสงค์</label><textarea name="purpose" rows="2" maxlength="200"></textarea></div>
+    <div class="f3" style="margin-top:12px">
+      <div><label>ผู้โดยสาร</label><input type="number" name="passengers" min="0"></div>
+      <div><label>เลขไมล์ออก</label><input type="number" name="mileStart" min="0"></div>
+      <div><label>เลขไมล์กลับ</label><input type="number" name="mileEnd" min="0"></div>
+    </div>
+    <div class="f2" style="margin-top:12px">
+      <div><label>ระยะทาง (กม.)</label><input type="number" name="distance" min="0" step="0.1"></div>
+      <div><label>ผู้ขับขี่</label><input name="driverName" maxlength="80"></div>
+    </div>
+  </div>
+  <div class="ft"><button type="button" class="btn s" data-close>ยกเลิก</button><button class="btn g">💾 บันทึก</button></div>
+</form></div>
+
+<div id="printRoot"></div>
+<div id="toastBox"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, setDoc, updateDoc, onSnapshot,
+  query, orderBy, limit, serverTimestamp, runTransaction }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+/* ================= CONFIG (ต้องเหมือนกับ index.html) ================= */
+const app = initializeApp({
+  apiKey:"AIzaSyBh333z5gXCPR5NZA6I3xEMidji0xw30kg",
+  authDomain:"khamtanot-car-booking.firebaseapp.com",
+  projectId:"khamtanot-car-booking",
+  storageBucket:"khamtanot-car-booking.firebasestorage.app",
+  messagingSenderId:"1060384588694",
+  appId:"1:1060384588694:web:ffea69cf57d32d007ed3b7",
+  measurementId:"G-VDW6EKS5N0"
+});
+const db = getFirestore(app);
+const bookingsCol = collection(db,"bookings");
+const signersRef  = doc(db,"app_config","signers");
+const ADMIN_PASS  = 'ktn2568';                   // ★ เปลี่ยนรหัสผ่านตรงนี้
+
+const ST={WAIT:"รออนุมัติ",OK:"อนุมัติแล้ว",RETWAIT:"รอตรวจสอบคืนรถ",DONE:"คืนรถแล้ว",NO:"ไม่อนุมัติ"};
+const ST_CLASS={[ST.WAIT]:"warn",[ST.OK]:"ok",[ST.RETWAIT]:"info",[ST.DONE]:"done",[ST.NO]:"bad"};
+const CARS=[
+ {id:'car01',name:'รถตู้ 12 ที่นั่ง',brand:'Toyota',license:'นข 5027',type:'van'},
+ {id:'car06',name:'รถตู้ 12 ที่นั่ง',brand:'Toyota',license:'นข 6102',type:'van'},
+ {id:'car12',name:'รถตู้ 12 ที่นั่ง',brand:'Toyota',license:'นข 6101',type:'van'},
+ {id:'car02',name:'รถบรรทุก 1 ตัน',brand:'Isuzu',license:'กบ 7223',type:'pickup'},
+ {id:'car07',name:'รถบรรทุก 1 ตัน',brand:'Isuzu',license:'นข 2952',type:'pickup'},
+ {id:'car10',name:'รถบรรทุก 1 ตัน',brand:'Isuzu',license:'กพ 2307',type:'pickup'},
+ {id:'car11',name:'รถบรรทุก 1 ตัน',brand:'Isuzu',license:'กพ 5088',type:'pickup'},
+ {id:'car03',name:'รถน้ำ Mitsubishi',brand:'Mitsubishi',license:'82-8453',type:'water'},
+ {id:'car04',name:'รถน้ำ Mitsubishi',brand:'Mitsubishi',license:'81-4253',type:'water'},
+ {id:'car05',name:'รถน้ำ Isuzu',brand:'Isuzu',license:'82-6986',type:'water'},
+ {id:'car08',name:'รถเครน',brand:'Isuzu',license:'82-3100',type:'crane'},
+ {id:'car09',name:'รถขยะ 6 ล้อ',brand:'Isuzu',license:'81-9638',type:'waste'},
+ {id:'car13',name:'รถแทร็กเตอร์',brand:'Kubota',license:'ตค 5774',type:'tractor'}];
+const carById=id=>CARS.find(c=>c.id===id)||null;
+const DRIVERS=[
+ {name:'นายพยุง อิ่มพร',phone:'0885288421'},{name:'นายชัยบดินทร์ ค้าชู',phone:'0903128652'},
+ {name:'นายสุทธิ์ใจ ชัยจา',phone:'0861587715'},{name:'นายไพบูลย์ ทองทิพย์',phone:'0965076365'},
+ {name:'นายสมัคร ตรงฉิน',phone:'0650491722'},{name:'นายสุภัสสร์ มุ้งบัง',phone:'0871486707'},
+ {name:'นายสมคิด เทียบเศียร',phone:'0892485144'},{name:'นายศิริชัย พะโว',phone:'0842696038'}];
+const DEF_SIGNERS={
+ org:'องค์การบริหารส่วนตำบลคำโตนด', to:'นายกองค์การบริหารส่วนตำบลคำโตนด',
+ heads:[{name:'นางสาวปราณี ประทีปแก้ว',pos:'หัวหน้าสำนักปลัด อบต.คำโตนด'},
+        {name:'นางสาวอตินุช โพธิ์ศรี',pos:'ผู้อำนวยการกองคลัง'},
+        {name:'นายสุชาติ ทิพย์สังข์',pos:'ผู้อำนวยการกองช่าง'},
+        {name:'นางสาวจิรภัทร ทวยจัด',pos:'ผอ.กองสวัสดิการสังคม รักษาราชการแทน ผอ.กองการศึกษาฯ'},
+        {name:'นายธงชัย รติรัตนสูติ',pos:'ผู้อำนวยการกองสาธารณสุขและสิ่งแวดล้อม'}],
+ delegates:[{name:'นางสาวทองล้วน งามเงิน',pos:'ปลัดองค์การบริหารส่วนตำบลคำโตนด'},
+            {name:'นางวนิดา รัตนวิเศษฤทธิ์',pos:'รองปลัดองค์การบริหารส่วนตำบลคำโตนด'}],
+ approvers:[{name:'นายสุชาติ เดชสุภา',pos:'นายกองค์การบริหารส่วนตำบลคำโตนด'},
+            {name:'นางสาวทองล้วน งามเงิน',pos:'ปลัดองค์การบริหารส่วนตำบลคำโตนด'},
+            {name:'นางวนิดา รัตนวิเศษฤทธิ์',pos:'รองปลัดองค์การบริหารส่วนตำบลคำโตนด'}]};
+
+/* ================= Utils ================= */
+const $=(s,r=document)=>r.querySelector(s), $=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const debounce=(f,ms=250)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f(...a),ms)}};
+const today=()=>new Date().toLocaleDateString('sv-SE');
+const MON=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const thParts=iso=>{if(!iso)return{d:'',m:'',y:''};const[y,m,d]=String(iso).split('-').map(Number);
+  return y?{d:String(d),m:MON[m-1]||'',y:String(y+543)}:{d:'',m:'',y:''}};
+const thDate=iso=>{const p=thParts(iso);return p.d?`${p.d} ${p.m} ${p.y}`:'-'};
+const thShort=iso=>{if(!iso)return'-';const[y,m,d]=String(iso).split('-');return `${d}/${m}/${+y+543}`};
+const hhmm=t=>(t||'').slice(0,5);
+const nf=n=>(n===''||n==null||isNaN(n))?'':Number(n).toLocaleString('th-TH');
+const rangeOf=b=>{const s=new Date(`${b.date}T${hhmm(b.startTime)||'00:00'}:00`).getTime();
+  const e=new Date(`${b.returnDate||b.date}T${hhmm(b.endTime)||'23:59'}:00`).getTime();
+  return [s,Math.max(e,s+60000)]};
+const overlap=(a,b)=>{const[s1,e1]=rangeOf(a),[s2,e2]=rangeOf(b);return s1<e2&&s2<e1};
+function toast(msg,type='ok',ms=2600){const el=document.createElement('div');
+  el.className='toast t-'+type;el.textContent=msg;$('#toastBox').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(-6px)';setTimeout(()=>el.remove(),250)},ms)}
+function lineText(b){const c=carById(b.carId)||{};return[
+ '🚗 แจ้งผลการจองรถส่วนกลาง',`สถานะ: ${b.status}`,
+ `รถ: ${b.carName||c.name||'-'} ทะเบียน ${b.carLicense||c.license||'-'}`,
+ `ผู้ขอ: ${b.userName||'-'} (${b.userPosition||'-'})`,
+ `ไป: ${b.destination||'-'}`,`เพื่อ: ${b.purpose||'-'}`,
+ `วันที่: ${thShort(b.date)} ${hhmm(b.startTime)} น. ถึง ${thShort(b.returnDate||b.date)} ${hhmm(b.endTime)} น.`,
+ `พนักงานขับรถ: ${b.driverName||'-'} ${b.driverPhone||''}`].join('\n')}
+function shareToLine(b){const t=lineText(b);
+  const w=window.open('https://line.me/R/msg/text/?'+encodeURIComponent(t),'_blank','noopener');
+  if(!w){navigator.clipboard?.writeText(t);toast('เบราว์เซอร์บล็อกป๊อปอัป — คัดลอกข้อความให้แล้ว','warn')}}
+
+/* ================= ผู้ลงนาม ================= */
+const LS='ktn.signers.v1';
+let S=(()=>{try{return JSON.parse(localStorage.getItem(LS))||DEF_SIGNERS}catch{return DEF_SIGNERS}})();
+async function saveSigners(o){S={...DEF_SIGNERS,...o};localStorage.setItem(LS,JSON.stringify(S));
+  await setDoc(signersRef,S,{merge:true})}
+
+/* ================= แบบฟอร์มพิมพ์ แบบ ๓ ================= */
+const dot=(v,c='f1')=>`<span class="dl ${c}">${esc(v||'')}</span>`;
+const cbox=on=>`<span class="cb">${on?'✓':''}</span>`;
+function buildForm(b,o={}){
+  const car=carById(b.carId)||{}, dt=thParts(b.date);
+  const self=!!b.driverName&&b.driverName.trim()===(b.userName||'').trim();
+  const head=o.head??b.signHead??'', dele=o.delegate??b.signDelegate??'';
+  const appr=o.approver??b.signApprover??'';
+  const pos=(l,n)=>l.find(x=>x.name===n)?.pos||'';
+  return `<div class="sheet">
+  <div class="form-no">แบบ ๓</div>
+  <h1 class="doc-title">ใบขออนุญาตใช้รถส่วนกลาง</h1>
+  <div class="date-line">วันที่ ${dot(dt.d,'w-50')} เดือน ${dot(dt.m,'w-110')} พ.ศ. ${dot(dt.y,'w-70')}</div>
+  <div class="to-line">เรียน&nbsp;&nbsp;${esc(S.to)}</div>
+  <p class="body-text">
+    ข้าพเจ้า ${dot(b.userName,'f2')} ตำแหน่ง ${dot(b.userPosition,'f2')}
+    ขออนุญาตใช้รถส่วนกลาง ยี่ห้อ ${dot(b.carBrand||car.brand,'f1')}
+    หมายเลขทะเบียน ${dot(b.carLicense||car.license,'f1')}
+    เดินทางไปที่ ${dot(b.destination,'f3')} เพื่อ ${dot(b.purpose,'f3')}
+    ในวันที่ ${dot(thDate(b.date),'f2')} เวลา ${dot(hhmm(b.startTime),'w-70')} น.
+    เลขไมล์ ${dot(nf(b.mileStart),'w-90')}
+    และกลับในวันที่ ${dot(thDate(b.returnDate||b.date),'f2')} เวลา ${dot(hhmm(b.endTime),'w-70')} น.
+    เลขไมล์ ${dot(nf(b.mileEnd),'w-90')}
+    รวมเป็นระยะทาง ${dot(nf(b.distance),'w-90')} กิโลเมตร
+    มีคนนั่งไปด้วยจำนวน ${dot(nf(b.passengers),'w-60')} คน
+    โดย ${cbox(self)} ข้าพเจ้าเป็นผู้ขับขี่
+    ${cbox(!self)} ให้ ${dot(self?'':b.driverName,'f2')} เป็นผู้ขับขี่
+  </p>
+  <div class="sign-row">
+    <div class="sign-box"><div>(ลงชื่อ) ${dot('','fill')} ผู้ขออนุญาต</div>
+      <div>( ${esc(b.userName||'')} )</div><div>ตำแหน่ง ${esc(b.userPosition||'')}</div></div>
+    <div class="sign-box"><div>(ลงชื่อ) ${dot('','fill')} ผู้อำนวยการกอง/ผู้แทน</div>
+      <div>( ${esc(head)} )</div><div>${esc(pos(S.heads,head))}</div></div>
+  </div>
+  <div class="mini-head">ความเห็นผู้มีอำนาจสั่งใช้รถ</div>
+  <div class="opt-line">${cbox(b.status===ST.OK)} อนุญาต &nbsp;&nbsp; ${cbox(b.status===ST.NO)} ไม่อนุญาต เนื่องจาก ${dot(b.status===ST.NO?b.returnReason:'','fill')}</div>
+  <div class="sign-row">
+    <div class="sign-box"><div>(ลงชื่อ) ${dot('','fill')}</div>
+      <div>( ${esc(dele)} )</div><div>${esc(pos(S.delegates,dele))}</div>
+      <div class="small">ผู้มีอำนาจสั่งใช้รถแทน</div></div>
+    <div class="sign-box"><div>(ลงชื่อ) ${dot('','fill')} ผู้อนุมัติ</div>
+      <div>( ${esc(appr)} )</div><div>${esc(pos(S.approvers,appr))}</div></div>
+  </div></div>`;
+}
+function autoFit(sheet){
+  const p=document.createElement('div');p.style.cssText='position:absolute;visibility:hidden;height:1cm';
+  document.body.appendChild(p);const cm=p.getBoundingClientRect().height||37.8;p.remove();
+  const max=cm*27.7; let fs=16; sheet.style.setProperty('--fs',fs+'pt');
+  const h=()=>sheet.scrollHeight-cm*2;
+  while(h()>max&&fs>11){fs=+(fs-0.25).toFixed(2);sheet.style.setProperty('--fs',fs+'pt')}
+}
+function openPrint(b){
+  const root=$('#printRoot');
+  const sel=(id,list,cur,ph)=>`<select id="${id}"><option value="">${ph}</option>`+
+    list.map(x=>`<option value="${esc(x.name)}"${x.name===cur?' selected':''}>${esc(x.name)}</option>`).join('')+`</select>`;
+  root.className='preview';
+  root.innerHTML=`<div class="pv-bar"><strong>ผู้ลงนาม:</strong>
+    ${sel('pvHead',S.heads,b.signHead||'','ผอ.กอง/ผู้แทน —')}
+    ${sel('pvDele',S.delegates,b.signDelegate||'','ผู้สั่งใช้รถแทน —')}
+    ${sel('pvAppr',S.approvers,b.signApprover||'','ผู้อนุมัติ —')}
+    <span class="sp"></span>
+    <button id="pvSave" style="background:#1d4ed8;color:#fff">💾 บันทึกผู้ลงนาม</button>
+    <button id="pvPrint" style="background:#16a34a;color:#fff">🖨️ พิมพ์</button>
+    <button id="pvClose" style="background:#64748b;color:#fff">ปิด</button></div><div id="pvBody"></div>`;
+  const draw=()=>{$('#pvBody').innerHTML=buildForm(b,{head:$('#pvHead').value,
+      delegate:$('#pvDele').value,approver:$('#pvAppr').value}); autoFit($('#pvBody .sheet'))};
+  ['pvHead','pvDele','pvAppr'].forEach(i=>$('#'+i).onchange=draw);
+  $('#pvSave').onclick=async()=>{ try{
+      await updateDoc(doc(db,'bookings',b.id),{signHead:$('#pvHead').value,
+        signDelegate:$('#pvDele').value,signApprover:$('#pvAppr').value});
+      toast('บันทึกผู้ลงนามลงรายการแล้ว','ok');
+    }catch(e){toast(e.message,'bad')} };
+  $('#pvPrint').onclick=()=>window.print();
+  $('#pvClose').onclick=closePrint;
+  document.addEventListener('keydown',escClose);
+  document.body.style.overflow='hidden'; draw();
+}
+const escClose=e=>{if(e.key==='Escape')closePrint()};
+function closePrint(){const r=$('#printRoot');r.className='';r.innerHTML='';
+  document.removeEventListener('keydown',escClose);document.body.style.overflow=''}
+
+/* ================= เข้าสู่ระบบ ================= */
+const SKEY='ktn.admin.session';
+let ALL=[], unsub=null;
+const byId=id=>ALL.find(b=>b.id===id);
+function openApp(){ $('#gate').hidden=true; $('#app').hidden=false; boot(); }
+if(sessionStorage.getItem(SKEY)==='1') openApp();
+$('#btnLogin').onclick=()=>{ if($('#pw').value===ADMIN_PASS){sessionStorage.setItem(SKEY,'1');openApp()}
+  else toast('รหัสผ่านไม่ถูกต้อง','bad') };
+$('#pw').addEventListener('keydown',e=>e.key==='Enter'&&$('#btnLogin').click());
+$('#btnOut').onclick=()=>{sessionStorage.removeItem(SKEY);unsub&&unsub();location.reload()};
+
+/* ================= Boot ================= */
+function boot(){
+  onSnapshot(signersRef,s=>{ if(s.exists()){S={...DEF_SIGNERS,...s.data()};localStorage.setItem(LS,JSON.stringify(S))}
+    fillSignerSelects(); if(!$('#a-cfg').hidden) renderCfg(); },e=>console.warn('signers:',e.message));
+
+  $('#aSt').innerHTML+=Object.values(ST).map(s=>`<option>${s}</option>`).join('');
+  $('#aCar').innerHTML+=CARS.map(c=>`<option value="${c.id}">${esc(c.name)} ${esc(c.license)}</option>`).join('');
+  $('#apDriver').innerHTML=`<option value="">— ไม่ระบุ —</option>`+
+    DRIVERS.map((d,i)=>`<option value="${i}">${esc(d.name)}</option>`).join('');
+  fillSignerSelects();
+  const t=new Date();
+  $('#rFrom').value=new Date(t.getFullYear(),t.getMonth(),1).toLocaleDateString('sv-SE');
+  $('#rTo').value=today();
+
+  unsub&&unsub();
+  unsub=onSnapshot(query(bookingsCol,orderBy('timestamp','desc'),limit(1000)),
+    s=>{ALL=s.docs.map(d=>({id:d.id,...d.data()}));render()},
+    e=>toast('โหลดข้อมูลล้มเหลว: '+e.message,'bad',6000));
+}
+window.addEventListener('beforeunload',()=>unsub&&unsub());
+
+/* ================= Tabs ================= */
+$('#aTabs button').forEach(b=>b.onclick=()=>{
+  $('#aTabs button').forEach(x=>{x.classList.toggle('on',x===b);$('#a-'+x.dataset.t).hidden=(x!==b)});
+  if(b.dataset.t==='rep')renderRep(); if(b.dataset.t==='cfg')renderCfg();
+});
+
+/* ================= ตาราง ================= */
+const TH=r=>`<thead><tr>${r.map(h=>`<th>${h}</th>`).join('')}</tr></thead>`;
+const HEAD=TH(['วันที่ใช้','รถ','ผู้ขอใช้','สถานที่ / วัตถุประสงค์','ผู้ขับขี่','สถานะ','จัดการ']);
+function acts(b){
+  const p=`<button class="btn sm s" data-print="${b.id}" title="พิมพ์">🖨️</button>`;
+  const ed=`<button class="btn sm o" data-ed="${b.id}" title="แก้ไข">✏️</button>`;
+  if(b.status===ST.WAIT)   return `<button class="btn sm g" data-ap="${b.id}">อนุมัติ</button> <button class="btn sm r" data-no="${b.id}">ไม่อนุมัติ</button> ${ed} ${p}`;
+  if(b.status===ST.OK)     return `<button class="btn sm w" data-line="${b.id}">LINE</button> <button class="btn sm i" data-back="${b.id}">รับคืนเอง</button> ${ed} ${p}`;
+  if(b.status===ST.RETWAIT)return `<button class="btn sm g" data-back="${b.id}">รับคืนรถ</button> ${ed} ${p}`;
+  return `${ed} ${p}`;
+}
+const row=b=>`<tr>
+  <td>${thShort(b.date)}<div class="hint">${hhmm(b.startTime)}–${hhmm(b.endTime)} น.</div></td>
+  <td>${esc(b.carName)}<div class="hint">${esc(b.carLicense)}</div></td>
+  <td>${esc(b.userName)}<div class="hint">${esc(b.userPosition)}</div></td>
+  <td>${esc(b.destination)}<div class="hint">${esc(b.purpose)}</div></td>
+  <td>${esc(b.driverName||'-')}<div class="hint">${esc(b.driverPhone||'')}</div></td>
+  <td><span class="badge b-${ST_CLASS[b.status]||'done'}">${esc(b.status)}</span>
+    ${b.status===ST.NO&&b.returnReason?`<div class="hint">${esc(b.returnReason)}</div>`:''}</td>
+  <td style="white-space:nowrap">${acts(b)}</td></tr>`;
+const fill=(sel,rows,msg)=>$(sel).innerHTML=HEAD+(rows.length?`<tbody>${rows.map(row).join('')}</tbody>`
+  :`<tbody><tr><td colspan="7" class="empty">${msg}</td></tr></tbody>`);
+function render(){
+  const w=ALL.filter(b=>b.status===ST.WAIT), o=ALL.filter(b=>b.status===ST.OK),
+        r=ALL.filter(b=>b.status===ST.RETWAIT), d=ALL.filter(b=>b.status===ST.DONE);
+  $('#kpi').innerHTML=`
+    <div class="k w"><b>${w.length}</b><span>รออนุมัติ</span></div>
+    <div class="k g"><b>${o.length}</b><span>อนุมัติแล้ว / กำลังใช้</span></div>
+    <div class="k i"><b>${r.length}</b><span>รอตรวจรับคืน</span></div>
+    <div class="k s"><b>${d.length}</b><span>คืนรถแล้ว</span></div>
+    <div class="k"><b>${ALL.length}</b><span>รายการทั้งหมด</span></div>`;
+  $('#nWait').textContent=w.length?`(${w.length})`:''; $('#nRet').textContent=r.length?`(${r.length})`:'';
+  fill('#tWait',w,'ไม่มีคำขอรออนุมัติ 🎉'); fill('#tOk',o,'ยังไม่มีรายการที่อนุมัติ');
+  fill('#tRet',r,'ไม่มีรายการรอตรวจรับคืน'); renderFiltered();
+  if(!$('#a-rep').hidden) renderRep();
+}
+function renderFiltered(){
+  const kw=$('#aKey').value.trim().toLowerCase(), st=$('#aSt').value, car=$('#aCar').value;
+  fill('#tAll',ALL.filter(b=>(!st||b.status===st)&&(!car||b.carId===car)&&
+    (!kw||`${b.userName} ${b.carLicense} ${b.destination} ${b.purpose}`.toLowerCase().includes(kw))),'ไม่พบรายการ');
+}
+$('#aKey').oninput=debounce(renderFiltered,250); $('#aSt').onchange=$('#aCar').onchange=renderFiltered;
+
+/* ================= อนุมัติ ================= */
+function fillSignerSelects(){
+  const mk=(el,l,ph,def)=>{const n=$(el);if(!n)return;const cur=n.value;
+    n.innerHTML=`<option value="">${ph}</option>`+l.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');
+    n.value=cur||def||''};
+  mk('#apHead',S.heads,'— เลือก —'); mk('#apDele',S.delegates,'— เลือก —');
+  mk('#apAppr',S.approvers,'— เลือก —',S.approvers[0]?.name);
+}
+let apId=null;
+function openApprove(id){
+  const b=byId(id); if(!b)return; apId=id;
+  $('#apInfo').innerHTML=`<b>${esc(b.userName)}</b> (${esc(b.userPosition)})<br>
+    🚗 ${esc(b.carName)} ${esc(b.carLicense)}<br>📍 ${esc(b.destination)} — ${esc(b.purpose)}<br>
+    🗓️ ${thShort(b.date)} ${hhmm(b.startTime)} น. ถึง ${thShort(b.returnDate||b.date)} ${hhmm(b.endTime)} น.<br>
+    👥 ${nf(b.passengers)} คน · ${nf(b.distance)} กม.`;
+  const i=DRIVERS.findIndex(d=>d.name===b.driverName);
+  $('#apDriver').value=i>=0?String(i):''; $('#apPhone').value=b.driverPhone||'';
+  $('#apMile').value=b.mileStart??'';
+  $('#apHead').value=b.signHead||''; $('#apDele').value=b.signDelegate||'';
+  $('#apAppr').value=b.signApprover||S.approvers[0]?.name||'';
+  $('#mkAp').classList.add('on');
+}
+$('#apDriver').onchange=e=>{const i=e.target.value;if(i!=='')$('#apPhone').value=DRIVERS[+i].phone};
+$('#frmAp').addEventListener('submit',async e=>{
+  e.preventDefault(); const b=byId(apId); if(!b)return; const btn=$('#apGo'); btn.disabled=true;
+  try{
+    const upd={status:ST.OK,signHead:$('#apHead').value,signDelegate:$('#apDele').value,
+      signApprover:$('#apAppr').value,mileStart:$('#apMile').value===''?'':+$('#apMile').value,
+      approveTimestamp:serverTimestamp()};
+    const i=$('#apDriver').value;
+    if(i!==''){upd.driverName=DRIVERS[+i].name;upd.driverPhone=DRIVERS[+i].phone}
+    else if($('#apPhone').value) upd.driverPhone=$('#apPhone').value;
+    const clash=ALL.find(x=>x.id!==b.id&&x.carId===b.carId&&[ST.OK,ST.RETWAIT].includes(x.status)&&overlap(b,x));
+    if(clash&&!confirm(`⚠️ ชนคิวกับ ${clash.userName} (${thShort(clash.date)} ${hhmm(clash.startTime)}–${hhmm(clash.endTime)} น.)\nต้องการอนุมัติต่อหรือไม่?`))return;
+    await runTransaction(db,async tx=>{
+      const ref=doc(db,'bookings',b.id), cur=await tx.get(ref);
+      if(!cur.exists())throw new Error('ไม่พบรายการนี้แล้ว');
+      if(cur.data().status!==ST.WAIT)throw new Error('รายการนี้ถูกดำเนินการไปแล้ว');
+      tx.update(ref,upd);
+    });
+    $('#mkAp').classList.remove('on'); toast('อนุมัติเรียบร้อย','ok');
+    if($('#apLine').checked){shareToLine({...b,...upd,status:ST.OK});
+      updateDoc(doc(db,'bookings',b.id),{isLineSent:true})}
+  }catch(err){toast(err.message,'bad',4500)} finally{btn.disabled=false}
+});
+
+/* ================= ไม่อนุมัติ / รับคืน ================= */
+let noId=null;
+$('#frmNo').addEventListener('submit',async e=>{
+  e.preventDefault(); const r=$('#noReason').value.trim(); if(!r)return;
+  try{ await updateDoc(doc(db,'bookings',noId),{status:ST.NO,returnReason:r,approveTimestamp:serverTimestamp()});
+    $('#mkNo').classList.remove('on'); toast('บันทึกการไม่อนุมัติแล้ว','info');
+  }catch(err){toast(err.message,'bad')}
+});
+async function receiveBack(id){
+  const b=byId(id); if(!b)return;
+  if(!confirm(`ยืนยันรับคืน ${b.carName} ${b.carLicense} จาก ${b.userName}?`))return;
+  try{ await updateDoc(doc(db,'bookings',id),{status:ST.DONE,adminReturnApproveTimestamp:serverTimestamp()});
+    toast('บันทึกรับคืนรถแล้ว','ok'); }catch(err){toast(err.message,'bad')}
+}
+
+/* ================= แก้ไขรายการ ================= */
+let edId=null;
+const ED_FIELDS=['userName','userPosition','date','startTime','returnDate','endTime',
+                 'destination','purpose','passengers','mileStart','mileEnd','distance','driverName'];
+function openEdit(id){
+  const b=byId(id); if(!b)return; edId=id; const F=$('#frmEd');
+  ED_FIELDS.forEach(k=>{ if(F[k]) F[k].value=b[k]??'' });
+  $('#mkEd').classList.add('on');
+}
+$('#frmEd').addEventListener('submit',async e=>{
+  e.preventDefault(); const F=$('#frmEd'), NUM=['passengers','mileStart','mileEnd','distance'], upd={};
+  ED_FIELDS.forEach(k=>{ if(!F[k])return; const v=F[k].value.trim();
+    upd[k]=NUM.includes(k)?(v===''?'':+v):v });
+  if(!upd.returnDate) upd.returnDate=upd.date;
+  try{ await updateDoc(doc(db,'bookings',edId),upd);
+    $('#mkEd').classList.remove('on'); toast('บันทึกการแก้ไขแล้ว','ok');
+  }catch(err){toast(err.message,'bad')}
+});
+
+/* ================= รายงาน ================= */
+const repRows=()=>{const f=$('#rFrom').value,t=$('#rTo').value;
+  return ALL.filter(b=>(!f||b.date>=f)&&(!t||b.date<=t))
+    .sort((a,b)=>((a.date||'')+(a.startTime||'')).localeCompare((b.date||'')+(b.startTime||'')))};
+function renderRep(){
+  const R=repRows(), per={};
+  R.forEach(b=>{const k=b.carId||'-';per[k]=per[k]||{n:0,km:0,name:b.carName,lic:b.carLicense};
+    per[k].n++;per[k].km+=Number(b.distance)||0});
+  const v=Object.values(per);
+  $('#tRep').innerHTML=TH(['รถ','ทะเบียน','จำนวนครั้ง','ระยะทางรวม (กม.)'])+`<tbody>${v.length
+    ? v.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.lic)}</td><td>${x.n}</td><td>${nf(x.km)}</td></tr>`).join('')+
+      `<tr style="font-weight:700;background:#f8fafc"><td colspan="2">รวม</td><td>${R.length}</td><td>${nf(v.reduce((s,x)=>s+x.km,0))}</td></tr>`
+    : `<tr><td colspan="4" class="empty">ไม่มีข้อมูลในช่วงที่เลือก</td></tr>`}</tbody>`;
+  $('#tRepList').innerHTML=TH(['วันที่','รถ','ผู้ขอใช้','สถานที่','ผู้ขับขี่','กม.','สถานะ'])+`<tbody>${R.length
+    ? R.map(b=>`<tr><td>${thShort(b.date)}<div class="hint">${hhmm(b.startTime)}–${hhmm(b.endTime)}</div></td>
+        <td>${esc(b.carName)}<div class="hint">${esc(b.carLicense)}</div></td>
+        <td>${esc(b.userName)}</td><td>${esc(b.destination)}</td><td>${esc(b.driverName||'-')}</td>
+        <td>${nf(b.distance)}</td>
+        <td><span class="badge b-${ST_CLASS[b.status]||'done'}">${esc(b.status)}</span></td></tr>`).join('')
+    : `<tr><td colspan="7" class="empty">ไม่มีข้อมูล</td></tr>`}</tbody>`;
+}
+$('#rGo').onclick=renderRep;
+$('#rCsv').onclick=()=>{
+  const rows=repRows(); if(!rows.length)return toast('ไม่มีข้อมูลให้ส่งออก','warn');
+  const head=['วันที่ไป','เวลาออก','วันที่กลับ','เวลากลับ','รถ','ทะเบียน','ผู้ขอใช้','ตำแหน่ง','สถานที่',
+              'วัตถุประสงค์','ผู้ขับขี่','ผู้โดยสาร','ไมล์ออก','ไมล์กลับ','ระยะทาง(กม.)','สถานะ'];
+  const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const csv='\uFEFF'+[head.map(q).join(',')].concat(rows.map(b=>[b.date,hhmm(b.startTime),
+    b.returnDate||b.date,hhmm(b.endTime),b.carName,b.carLicense,b.userName,b.userPosition,
+    b.destination,b.purpose,b.driverName,b.passengers,b.mileStart,b.mileEnd,b.distance,b.status]
+    .map(q).join(','))).join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`รายงานการใช้รถ_${$('#rFrom').value}_ถึง_${$('#rTo').value}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+};
+
+/* ================= ตั้งค่าผู้ลงนาม ================= */
+const GROUPS=[['heads','ผู้อำนวยการกอง / ผู้แทน'],['delegates','ผู้มีอำนาจสั่งใช้รถแทน'],['approvers','ผู้อนุมัติ']];
+const srow=(n='',p='')=>`<div class="srow"><input class="n" value="${esc(n)}" placeholder="ชื่อ-สกุล">
+  <input class="p" value="${esc(p)}" placeholder="ตำแหน่ง"><button type="button" class="btn sm r" data-del>ลบ</button></div>`;
+function renderCfg(){
+  $('#cfgOrg').value=S.org||''; $('#cfgTo').value=S.to||'';
+  $('#cfgGroups').innerHTML=GROUPS.map(([k,l])=>`<div class="sgrp" data-g="${k}"><h4>${l}</h4>
+    <div class="rows">${(S[k]||[]).map(x=>srow(x.name,x.pos)).join('')}</div>
+    <button type="button" class="btn sm o" data-add="${k}">➕ เพิ่มรายชื่อ</button></div>`).join('');
+}
+$('#cfgSave').onclick=async()=>{
+  const out={org:$('#cfgOrg').value.trim(),to:$('#cfgTo').value.trim()};
+  GROUPS.forEach(([k])=>out[k]=$(`.sgrp[data-g="${k}"] .srow`).map(r=>({
+    name:r.querySelector('.n').value.trim(),pos:r.querySelector('.p').value.trim()})).filter(x=>x.name));
+  try{await saveSigners(out);fillSignerSelects();toast('บันทึกผู้ลงนามเรียบร้อย หน้าบ้านอัปเดตแล้ว','ok')}
+  catch(e){toast('บันทึกไม่สำเร็จ: '+e.message,'bad')}
+};
+$('#cfgReset').onclick=()=>{if(confirm('คืนค่าผู้ลงนามเป็นค่าเริ่มต้น?')){S=JSON.parse(JSON.stringify(DEF_SIGNERS));renderCfg()}};
+
+/* ================= Event delegation ================= */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-print],[data-ap],[data-no],[data-back],[data-line],[data-ed],[data-add],[data-del],[data-close]');
+  if(!t)return; const d=t.dataset;
+  if(d.close!==undefined){t.closest('.mask').classList.remove('on');return}
+  if(d.print){const b=byId(d.print); b&&openPrint(b)}
+  if(d.ap) openApprove(d.ap);
+  if(d.no){noId=d.no;$('#noReason').value='';$('#mkNo').classList.add('on')}
+  if(d.back) receiveBack(d.back);
+  if(d.ed) openEdit(d.ed);
+  if(d.line){const b=byId(d.line); if(b){shareToLine(b);updateDoc(doc(db,'bookings',b.id),{isLineSent:true})}}
+  if(d.add!==undefined) t.previousElementSibling.insertAdjacentHTML('beforeend',srow());
+  if(d.del!==undefined) t.closest('.srow').remove();
+});
+$('.mask').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('.mask.on').forEach(m=>m.classList.remove('on'))});
+</script>
+</body>
+</html>
